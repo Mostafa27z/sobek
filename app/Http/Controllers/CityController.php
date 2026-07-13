@@ -1,0 +1,105 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\City;
+use Illuminate\Http\Request;
+
+class CityController
+{
+    public function index()
+    {
+        $cities = City::paginate(15);
+        return view('admin.cities.index', compact('cities'));
+    }
+
+    public function create()
+    {
+        return view('admin.cities.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|unique:cities',
+            'can_be_from' => 'boolean',
+            'can_be_to' => 'boolean',
+            'description' => 'nullable|string'
+        ]);
+
+        $validated['can_be_from'] = $request->has('can_be_from');
+        $validated['can_be_to'] = $request->has('can_be_to');
+
+        City::create($validated);
+
+        return redirect()->route('admin.cities.index')
+            ->with('success', 'تم إضافة المدينة بنجاح');
+    }
+
+    public function edit(City $city)
+    {
+        return view('admin.cities.edit', compact('city'));
+    }
+
+    public function update(Request $request, City $city)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|unique:cities,name,' . $city->id,
+            'can_be_from' => 'boolean',
+            'can_be_to' => 'boolean',
+            'description' => 'nullable|string'
+        ]);
+
+        $validated['can_be_from'] = $request->has('can_be_from');
+        $validated['can_be_to'] = $request->has('can_be_to');
+
+        $city->update($validated);
+
+        return redirect()->route('admin.cities.index')
+            ->with('success', 'تم تحديث المدينة بنجاح');
+    }
+
+    public function destroy(City $city)
+    {
+        $city->delete();
+        
+        return redirect()->route('admin.cities.index')
+            ->with('success', 'تم حذف المدينة بنجاح');
+    }
+
+    private function normalizeArabic($text)
+    {
+        $text = str_replace(['أ', 'إ', 'آ'], 'ا', $text);
+        $text = str_replace('ة', 'ه', $text);
+        return $text;
+    }
+
+    public function searchApi(Request $request)
+    {
+        $query = $request->input('q');
+        $type = $request->input('type'); // 'from' or 'to'
+        
+        $citiesQuery = City::query();
+        
+        if ($type === 'from') {
+            $citiesQuery->where('can_be_from', true);
+        } elseif ($type === 'to') {
+            $citiesQuery->where('can_be_to', true);
+        }
+        
+        if ($query) {
+            $normalizedQuery = $this->normalizeArabic($query);
+            $citiesQuery->whereRaw(
+                "REPLACE(REPLACE(REPLACE(REPLACE(name, 'أ', 'ا'), 'إ', 'ا'), 'آ', 'ا'), 'ة', 'ه') LIKE ?", 
+                ['%' . $normalizedQuery . '%']
+            );
+        }
+        
+        $cities = $citiesQuery->paginate(15);
+        
+        return response()->json([
+            'items' => $cities->items(),
+            'more' => $cities->hasMorePages()
+        ]);
+    }
+}

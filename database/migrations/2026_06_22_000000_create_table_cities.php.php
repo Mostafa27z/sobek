@@ -9,7 +9,10 @@ return new class extends Migration {
     {
         Schema::create('cities', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('name');
+            $table->string('city');
+            $table->string('country');
+            $table->string('iata', 3)->nullable()->unique();
             $table->boolean('can_be_from')->default(false);
             $table->boolean('can_be_to')->default(false);
             $table->text('description')->nullable();

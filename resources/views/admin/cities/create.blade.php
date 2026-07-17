@@ -11,8 +11,23 @@
         @csrf
         
         <div class="form-group">
-            <label for="name">اسم المدينة *</label>
-            <input type="text" id="name" name="name" value="{{ old('name') }}" required placeholder="مثال: القاهرة (CAI)">
+            <label for="name">اسم المطار *</label>
+            <input type="text" id="name" name="name" value="{{ old('name') }}" required placeholder="مثال: مطار القاهرة الدولي">
+        </div>
+
+        <div class="form-group">
+            <label for="city">المدينة *</label>
+            <input type="text" id="city" name="city" value="{{ old('city') }}" required placeholder="مثال: القاهرة">
+        </div>
+
+        <div class="form-group">
+            <label for="country">الدولة *</label>
+            <input type="text" id="country" name="country" value="{{ old('country') }}" required placeholder="مثال: مصر">
+        </div>
+
+        <div class="form-group">
+            <label for="iata">رمز IATA *</label>
+            <input type="text" id="iata" name="iata" value="{{ old('iata') }}" required placeholder="مثال: CAI" maxlength="3">
         </div>
 
         <div class="form-group checkbox-group">

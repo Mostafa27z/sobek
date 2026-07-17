@@ -52,7 +52,10 @@ class CityControllerTest extends TestCase
     public function test_admin_can_store_city(): void
     {
         $data = [
-            'name' => 'Alexandria (ALY)',
+            'name' => 'مطار الإسكندرية الدولي',
+            'city' => 'الإسكندرية',
+            'country' => 'مصر',
+            'iata' => 'ALY',
             'can_be_from' => 1,
             'can_be_to' => 1,
             'description' => 'Beautiful city'
@@ -62,7 +65,10 @@ class CityControllerTest extends TestCase
         $response->assertRedirect(route('admin.cities.index'));
         
         $this->assertDatabaseHas('cities', [
-            'name' => 'Alexandria (ALY)',
+            'name' => 'مطار الإسكندرية الدولي',
+            'city' => 'الإسكندرية',
+            'country' => 'مصر',
+            'iata' => 'ALY',
             'can_be_from' => true,
             'can_be_to' => true,
         ]);
@@ -83,6 +89,9 @@ class CityControllerTest extends TestCase
 
         $data = [
             'name' => 'New Name',
+            'city' => 'New City',
+            'country' => 'New Country',
+            'iata' => 'NEW',
             'can_be_from' => 1,
             'description' => 'Updated desc'
         ];
@@ -93,6 +102,9 @@ class CityControllerTest extends TestCase
         $this->assertDatabaseHas('cities', [
             'id' => $city->id,
             'name' => 'New Name',
+            'city' => 'New City',
+            'country' => 'New Country',
+            'iata' => 'NEW',
             'can_be_from' => true,
             'can_be_to' => false,
         ]);

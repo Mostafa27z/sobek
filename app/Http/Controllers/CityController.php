@@ -21,7 +21,10 @@ class CityController
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|unique:cities',
+            'name' => 'required|string',
+            'city' => 'required|string',
+            'country' => 'required|string',
+            'iata' => 'required|string|size:3|unique:cities,iata',
             'can_be_from' => 'boolean',
             'can_be_to' => 'boolean',
             'description' => 'nullable|string'
@@ -44,7 +47,10 @@ class CityController
     public function update(Request $request, City $city)
     {
         $validated = $request->validate([
-            'name' => 'required|string|unique:cities,name,' . $city->id,
+            'name' => 'required|string',
+            'city' => 'required|string',
+            'country' => 'required|string',
+            'iata' => 'required|string|size:3|unique:cities,iata,' . $city->id,
             'can_be_from' => 'boolean',
             'can_be_to' => 'boolean',
             'description' => 'nullable|string'
@@ -89,10 +95,12 @@ class CityController
         
         if ($query) {
             $normalizedQuery = $this->normalizeArabic($query);
-            $citiesQuery->whereRaw(
-                "REPLACE(REPLACE(REPLACE(REPLACE(name, 'أ', 'ا'), 'إ', 'ا'), 'آ', 'ا'), 'ة', 'ه') LIKE ?", 
-                ['%' . $normalizedQuery . '%']
-            );
+            $citiesQuery->where(function($q) use ($normalizedQuery, $query) {
+                $q->whereRaw("REPLACE(REPLACE(REPLACE(REPLACE(name, 'أ', 'ا'), 'إ', 'ا'), 'آ', 'ا'), 'ة', 'ه') LIKE ?", ['%' . $normalizedQuery . '%'])
+                  ->orWhereRaw("REPLACE(REPLACE(REPLACE(REPLACE(city, 'أ', 'ا'), 'إ', 'ا'), 'آ', 'ا'), 'ة', 'ه') LIKE ?", ['%' . $normalizedQuery . '%'])
+                  ->orWhereRaw("REPLACE(REPLACE(REPLACE(REPLACE(country, 'أ', 'ا'), 'إ', 'ا'), 'آ', 'ا'), 'ة', 'ه') LIKE ?", ['%' . $normalizedQuery . '%'])
+                  ->orWhere('iata', 'LIKE', '%' . $query . '%');
+            });
         }
         
         $cities = $citiesQuery->paginate(15);

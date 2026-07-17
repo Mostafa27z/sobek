@@ -12,6 +12,9 @@ class City extends Model
 
     protected $fillable = [
         'name',
+        'city',
+        'country',
+        'iata',
         'can_be_from',
         'can_be_to',
         'description'

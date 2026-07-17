@@ -1355,15 +1355,37 @@
         .autocomplete-item {
             padding: 12px 16px;
             cursor: pointer;
-            font-size: 14px;
-            border-bottom: 1px solid #eee;
-            transition: background 0.2s ease;
+            border-bottom: 1px solid #f3f4f6;
+            transition: all 0.2s ease;
             text-align: right;
-            color: #333;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
         .autocomplete-item:hover, .autocomplete-item.active {
-            background: #f0f8ff;
-            color: var(--primary, #004777);
+            background: #f3f8fc;
+        }
+        .autocomplete-main {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        .autocomplete-sub {
+            font-size: 12px;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .autocomplete-iata {
+            background: #e5e7eb;
+            color: #374151;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: 0.5px;
         }
         .autocomplete-loader {
             padding: 12px;
@@ -3080,11 +3102,17 @@
                             data.items.forEach(function(city) {
                                 var item = document.createElement('div');
                                 item.className = 'autocomplete-item';
-                                item.innerText = city.name;
                                 item.dataset.id = city.id;
                                 
+                                item.innerHTML = 
+                                    '<div class="autocomplete-main">' + (city.name || '') + '</div>' +
+                                    '<div class="autocomplete-sub">' +
+                                        '<span>' + (city.city || '') + '، ' + (city.country || '') + '</span>' +
+                                        '<span class="autocomplete-iata">' + (city.iata || '') + '</span>' +
+                                    '</div>';
+                                
                                 item.addEventListener('click', function() {
-                                    input.value = city.name;
+                                    input.value = (city.city || '') + ' (' + (city.iata || '') + ')';
                                     hiddenInput.value = city.id;
                                     dropdown.style.display = 'none';
                                     

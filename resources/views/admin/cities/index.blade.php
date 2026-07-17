@@ -12,10 +12,12 @@
             <thead>
                 <tr>
                     <th>المعرف</th>
-                    <th>اسم المدينة</th>
+                    <th>اسم المطار</th>
+                    <th>المدينة</th>
+                    <th>الدولة</th>
+                    <th>رمز IATA</th>
                     <th>متاح كمغادرة (من)</th>
                     <th>متاح كوصول (إلى)</th>
-                    <th>الوصف</th>
                     <th>العمليات</th>
                 </tr>
             </thead>
@@ -24,6 +26,9 @@
                     <tr>
                         <td>{{ $city->id }}</td>
                         <td><strong>{{ $city->name }}</strong></td>
+                        <td>{{ $city->city }}</td>
+                        <td>{{ $city->country }}</td>
+                        <td><span class="badge badge-secondary">{{ $city->iata }}</span></td>
                         <td>
                             @if($city->can_be_from)
                                 <span class="badge badge-success">نعم</span>
@@ -38,7 +43,6 @@
                                 <span class="badge badge-danger">لا</span>
                             @endif
                         </td>
-                        <td>{{ Str::limit($city->description, 50) }}</td>
                         <td>
                             <div style="display: flex; gap: 8px;">
                                 <a href="{{ route('admin.cities.edit', $city->id) }}" class="btn btn-secondary btn-sm">تعديل</a>
@@ -52,7 +56,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" style="text-align: center; color: var(--gray);">لا توجد مدن مضافة حالياً.</td>
+                        <td colspan="8" style="text-align: center; color: var(--gray);">لا توجد مدن مضافة حالياً.</td>
                     </tr>
                 @endforelse
             </tbody>

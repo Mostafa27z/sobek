@@ -9,113 +9,40 @@ use Illuminate\Support\Facades\DB;
 class ImportCities extends Command
 {
     protected $signature = 'import:cities';
-    protected $description = 'Import cities in Arabic from countries+cities.json and alternateNamesV2.txt';
+    protected $description = 'Import cities in Arabic from airports_translated.json';
 
     public function handle()
     {
-        $jsonPath = base_path('countries+cities.json');
-        $altNamesPath = base_path('alternateNamesV2.txt');
+        $jsonPath = base_path('airports_translated.json');
 
         if (!file_exists($jsonPath)) {
-            $this->error("countries+cities.json not found at " . $jsonPath);
+            $this->error("airports_translated.json not found at " . $jsonPath);
             return 1;
         }
 
-        if (!file_exists($altNamesPath)) {
-            $this->error("alternateNamesV2.txt not found at " . $altNamesPath);
-            return 1;
-        }
-
-        $this->info("Loading English city names from countries+cities.json...");
+        $this->info("Loading airports from airports_translated.json...");
         $json = file_get_contents($jsonPath);
-        $countries = json_decode($json, true);
-        if (!$countries) {
-            $this->error("Invalid JSON in countries+cities.json");
+        $airports = json_decode($json, true);
+        if (!$airports) {
+            $this->error("Invalid JSON in airports_translated.json");
             return 1;
         }
 
-        $cityLookup = [];
-        $cityCount = 0;
-        foreach ($countries as $country) {
-            foreach ($country['cities'] as $cityName) {
-                $cityLookup[strtolower(trim($cityName))] = [
-                    'original' => $cityName,
-                    'arabic' => null
-                ];
-                $cityCount++;
-            }
-        }
-        $this->info("Loaded " . $cityCount . " unique city names to search for.");
-
-        $this->info("Parsing alternateNamesV2.txt (this may take a while)...");
-
-        $handle = fopen($altNamesPath, 'r');
-        if (!$handle) {
-            $this->error("Could not open alternateNamesV2.txt");
-            return 1;
-        }
-
-        $currentGeonameId = null;
-        $names = [];
-        $lineCount = 0;
-
-        $processGroup = function ($geonameId, $groupNames) use (&$cityLookup) {
-            $arabicName = null;
-            $englishNames = [];
-
-            foreach ($groupNames as $item) {
-                if ($item['lang'] === 'ar') {
-                    $arabicName = $item['name'];
-                } elseif ($item['lang'] === 'en' || $item['lang'] === '') {
-                    $englishNames[] = strtolower(trim($item['name']));
-                }
-            }
-
-            if ($arabicName) {
-                foreach ($englishNames as $engName) {
-                    if (isset($cityLookup[$engName])) {
-                        $cityLookup[$engName]['arabic'] = $arabicName;
-                    }
-                }
-            }
-        };
-
-        while (($line = fgets($handle)) !== false) {
-            $lineCount++;
-            if ($lineCount % 2000000 === 0) {
-                $this->info("Processed " . ($lineCount / 1000000) . " million lines...");
-            }
-
-            $parts = explode("\t", $line);
-            if (count($parts) < 4) continue;
-
-            $geonameId = $parts[1];
-            $lang = $parts[2];
-            $name = trim($parts[3]);
-
-            if ($geonameId !== $currentGeonameId) {
-                if ($currentGeonameId !== null) {
-                    $processGroup($currentGeonameId, $names);
-                }
-                $currentGeonameId = $geonameId;
-                $names = [];
-            }
-
-            $names[] = ['lang' => $lang, 'name' => $name];
-        }
-
-        if ($currentGeonameId !== null) {
-            $processGroup($currentGeonameId, $names);
-        }
-        fclose($handle);
-
-        $this->info("Alternate names parsed. Preparing database import...");
+        $this->info("Found " . count($airports) . " airports to import.");
 
         $insertData = [];
-        foreach ($cityLookup as $engName => $data) {
-            if ($data['arabic']) {
-                $insertData[$data['arabic']] = [
-                    'name' => $data['arabic'],
+        foreach ($airports as $iata => $airport) {
+            $name = $airport['name'] ?? null;
+            $city = $airport['city'] ?? null;
+            $country = $airport['country'] ?? null;
+
+            // Only import if we have name, city, country, and iata
+            if ($name && $city && $country && $iata) {
+                $insertData[strtoupper(trim($iata))] = [
+                    'name' => trim($name),
+                    'city' => trim($city),
+                    'country' => trim($country),
+                    'iata' => strtoupper(trim($iata)),
                     'can_be_from' => true,
                     'can_be_to' => true,
                     'created_at' => now(),
@@ -124,16 +51,14 @@ class ImportCities extends Command
             }
         }
 
-        $this->info("Found " . count($insertData) . " cities with Arabic names.");
+        $this->info("Prepared " . count($insertData) . " unique records. Inserting into database...");
 
-        $this->info("Inserting into database...");
-        
         $chunks = array_chunk(array_values($insertData), 1000);
         foreach ($chunks as $chunk) {
             City::insertOrIgnore($chunk);
         }
 
-        $this->info("Successfully imported cities!");
+        $this->info("Successfully imported cities/airports!");
         return 0;
     }
 }

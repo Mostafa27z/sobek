@@ -1231,7 +1231,7 @@
             border: none;
             color: #fff;
             position: relative;
-            overflow: visible;
+            overflow: visible !important;
         }
 
         .search-title {
@@ -1256,9 +1256,10 @@
 
         .search-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin-bottom: 16px;
+            overflow: visible !important;
         }
 
         .form-group {
@@ -1719,6 +1720,7 @@
             .search-grid {
                 grid-template-columns: 1fr;
                 gap: 15px;
+                overflow: visible !important;
             }
 
             .search-btn {
@@ -2229,7 +2231,8 @@
 
             .search-grid {
                 grid-template-columns: 1fr;
-                gap: 12px
+                gap: 12px;
+                overflow: visible !important;
             }
 
             .search-btn {
@@ -2464,9 +2467,9 @@
                                     <span>بعمر 12 سنة وما فوق</span>
                                 </div>
                                 <div class="counter-control">
-                                    <button type="button" class="counter-btn" onclick="updateCounter('adults', -1, event)">-</button>
-                                    <span id="adultsCount">1</span>
-                                    <button type="button" class="counter-btn" onclick="updateCounter('adults', 1, event)">+</button>
+                                    <button type="button" id="adultsMinus" class="counter-btn" onclick="updateCounter('adults', -1, event)" disabled>-</button>
+                                    <span id="adultsCount" class="counter-value">1</span>
+                                    <button type="button" id="adultsPlus" class="counter-btn" onclick="updateCounter('adults', 1, event)">+</button>
                                 </div>
                                 <input type="hidden" name="number_of_adults" id="number_of_adults" value="1">
                             </div>
@@ -2477,9 +2480,9 @@
                                     <span>بعمر 2-12 سنة</span>
                                 </div>
                                 <div class="counter-control">
-                                    <button type="button" class="counter-btn" onclick="updateCounter('children', -1, event)">-</button>
-                                    <span id="childrenCount">0</span>
-                                    <button type="button" class="counter-btn" onclick="updateCounter('children', 1, event)">+</button>
+                                    <button type="button" id="childrenMinus" class="counter-btn" onclick="updateCounter('children', -1, event)" disabled>-</button>
+                                    <span id="childrenCount" class="counter-value">0</span>
+                                    <button type="button" id="childrenPlus" class="counter-btn" onclick="updateCounter('children', 1, event)">+</button>
                                 </div>
                                 <input type="hidden" name="number_of_children" id="number_of_children" value="0">
                             </div>
@@ -2490,14 +2493,14 @@
                                     <span>تحت عمر سنتين</span>
                                 </div>
                                 <div class="counter-control">
-                                    <button type="button" class="counter-btn" onclick="updateCounter('babies', -1, event)">-</button>
-                                    <span id="babiesCount">0</span>
-                                    <button type="button" class="counter-btn" onclick="updateCounter('babies', 1, event)">+</button>
+                                    <button type="button" id="babiesMinus" class="counter-btn" onclick="updateCounter('babies', -1, event)" disabled>-</button>
+                                    <span id="babiesCount" class="counter-value">0</span>
+                                    <button type="button" id="babiesPlus" class="counter-btn" onclick="updateCounter('babies', 1, event)">+</button>
                                 </div>
                                 <input type="hidden" name="number_of_babies" id="number_of_babies" value="0">
                             </div>
                             
-                            <button type="button" class="btn-primary" style="width:100%;margin-top:15px;padding:8px" onclick="togglePassengersDropdown(event)">تم</button>
+                            <button type="button" style="width:100%; margin-top:15px; padding:12px; background:var(--primary); color:#fff; border:none; border-radius:10px; font-weight:bold; cursor:pointer; transition: background 0.2s;" onmouseover="this.style.background='var(--primary-dark)'" onmouseout="this.style.background='var(--primary)'" onclick="togglePassengersDropdown(event)">تم</button>
                         </div>
                     </div>
 

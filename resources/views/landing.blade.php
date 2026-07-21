@@ -3394,10 +3394,10 @@
 
             // ===== MODAL =====
             window.openInquiryModal = function () {
-                var fromSelect = document.getElementById('from_city_id');
-                var fromCityName = fromSelect && fromSelect.selectedIndex >= 0 ? fromSelect.options[fromSelect.selectedIndex].text : 'غير محدد';
-                var toSelect = document.getElementById('to_city_id');
-                var toCityName = toSelect && toSelect.selectedIndex >= 0 ? toSelect.options[toSelect.selectedIndex].text : 'غير محدد';
+                var fromInput = document.getElementById('from_city_search');
+                var fromCityName = (fromInput && fromInput.value.trim()) ? fromInput.value.trim() : 'غير محدد';
+                var toInput = document.getElementById('to_city_search');
+                var toCityName = (toInput && toInput.value.trim()) ? toInput.value.trim() : 'غير محدد';
                 var flightDate = document.getElementById('flightDate').value || 'غير محدد';
                 var returnDate = document.getElementById('returnDate').value || '';
 
@@ -3492,7 +3492,7 @@
                 msg += 'الركاب: ' + totalPassengers + ' شخص\n' +
                     'السعر الإجمالي: ' + parseInt(t.totalPrice).toLocaleString('ar-EG') + ' ج.م';
 
-                var url = WHATSAPP_ROUTE_TEMPLATE.replace(':id', t.id) + '?text=' + encodeURIComponent(msg);
+                var url = WHATSAPP_ROUTE_TEMPLATE.replace('TICKET_ID', t.id).replace(':id', t.id) + '?text=' + encodeURIComponent(msg);
                 window.open(url, '_blank', 'noopener,noreferrer');
                 closeBookingModal();
             };

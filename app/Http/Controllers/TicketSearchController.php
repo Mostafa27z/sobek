@@ -76,7 +76,9 @@ class TicketSearchController
         $message = request('text');
         
         if (!$message) {
-            $message = "أريد حجز تذكرة من {$ticket->fromCity->name} إلى {$ticket->toCity->name}";
+            $fromName = $ticket->fromCity ? ($ticket->fromCity->name ?: $ticket->fromCity->city) : 'غير محدد';
+            $toName = $ticket->toCity ? ($ticket->toCity->name ?: $ticket->toCity->city) : 'غير محدد';
+            $message = "أريد حجز تذكرة من {$fromName} إلى {$toName}";
             if ($ticket->airline) {
                 $message .= "\nشركة الطيران: {$ticket->airline}";
             }
@@ -90,7 +92,7 @@ class TicketSearchController
             $message .= "\nالسعر: {$ticket->price} جنيه";
         }
         
-        $whatsapp_url = "https://wa.me/?text=" . urlencode($message);
+        $whatsapp_url = "https://wa.me/201110073052?text=" . urlencode($message);
 
         return redirect($whatsapp_url);
     }

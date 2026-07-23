@@ -61,7 +61,7 @@
                     <option value="">اختر المدينة</option>
                     @foreach($fromCities as $city)
                         <option value="{{ $city->id }}" {{ old('from_city_id', $ticket->from_city_id) == $city->id ? 'selected' : '' }}>
-                            {{ $city->name }}
+                            {{ $city->name }} ({{ $city->city }} - {{ $city->country }}) [{{ $city->iata }}]
                         </option>
                     @endforeach
                 </select>
@@ -72,7 +72,7 @@
                     <option value="">اختر المدينة</option>
                     @foreach($toCities as $city)
                         <option value="{{ $city->id }}" {{ old('to_city_id', $ticket->to_city_id) == $city->id ? 'selected' : '' }}>
-                            {{ $city->name }}
+                            {{ $city->name }} ({{ $city->city }} - {{ $city->country }}) [{{ $city->iata }}]
                         </option>
                     @endforeach
                 </select>
@@ -204,6 +204,23 @@ document.addEventListener('DOMContentLoaded', function () {
     const toSelect = document.getElementById('to_city_id');
     const tripTypeSelect = document.getElementById('trip_type');
     const returnTripSection = document.getElementById('return_trip_section');
+    
+    // Select2 search initialization for cities dropdown
+    if (window.jQuery && jQuery().select2) {
+        $(fromSelect).select2({
+            placeholder: "ابحث عن المدينة أو المطار...",
+            allowClear: true,
+            width: '100%',
+            dir: "rtl"
+        }).on('change', updateOptions);
+
+        $(toSelect).select2({
+            placeholder: "ابحث عن المدينة أو المطار...",
+            allowClear: true,
+            width: '100%',
+            dir: "rtl"
+        }).on('change', updateOptions);
+    }
     
     // Flatpickr setup
     const fpConfig = {

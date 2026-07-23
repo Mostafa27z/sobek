@@ -14,15 +14,28 @@ class TicketController
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function ($q) use ($search) {
+            $normalizedSearch = str_replace(['أ', 'إ', 'آ', 'ة'], ['ا', 'ا', 'ا', 'ه'], $search);
+            $query->where(function ($q) use ($search, $normalizedSearch) {
                 $q->where('airline', 'like', "%{$search}%")
                     ->orWhere('weight', 'like', "%{$search}%")
                     ->orWhere('description', 'like', "%{$search}%")
-                    ->orWhereHas('fromCity', function ($q2) use ($search) {
-                        $q2->where('name', 'like', "%{$search}%");
+                    ->orWhereHas('fromCity', function ($q2) use ($search, $normalizedSearch) {
+                        $q2->where('name', 'like', "%{$search}%")
+                            ->orWhere('city', 'like', "%{$search}%")
+                            ->orWhere('country', 'like', "%{$search}%")
+                            ->orWhere('iata', 'like', "%{$search}%")
+                            ->orWhereRaw("REPLACE(REPLACE(REPLACE(REPLACE(name, 'أ', 'ا'), 'إ', 'ا'), 'آ', 'ا'), 'ة', 'ه') LIKE ?", ['%' . $normalizedSearch . '%'])
+                            ->orWhereRaw("REPLACE(REPLACE(REPLACE(REPLACE(city, 'أ', 'ا'), 'إ', 'ا'), 'آ', 'ا'), 'ة', 'ه') LIKE ?", ['%' . $normalizedSearch . '%'])
+                            ->orWhereRaw("REPLACE(REPLACE(REPLACE(REPLACE(country, 'أ', 'ا'), 'إ', 'ا'), 'آ', 'ا'), 'ة', 'ه') LIKE ?", ['%' . $normalizedSearch . '%']);
                     })
-                    ->orWhereHas('toCity', function ($q2) use ($search) {
-                        $q2->where('name', 'like', "%{$search}%");
+                    ->orWhereHas('toCity', function ($q2) use ($search, $normalizedSearch) {
+                        $q2->where('name', 'like', "%{$search}%")
+                            ->orWhere('city', 'like', "%{$search}%")
+                            ->orWhere('country', 'like', "%{$search}%")
+                            ->orWhere('iata', 'like', "%{$search}%")
+                            ->orWhereRaw("REPLACE(REPLACE(REPLACE(REPLACE(name, 'أ', 'ا'), 'إ', 'ا'), 'آ', 'ا'), 'ة', 'ه') LIKE ?", ['%' . $normalizedSearch . '%'])
+                            ->orWhereRaw("REPLACE(REPLACE(REPLACE(REPLACE(city, 'أ', 'ا'), 'إ', 'ا'), 'آ', 'ا'), 'ة', 'ه') LIKE ?", ['%' . $normalizedSearch . '%'])
+                            ->orWhereRaw("REPLACE(REPLACE(REPLACE(REPLACE(country, 'أ', 'ا'), 'إ', 'ا'), 'آ', 'ا'), 'ة', 'ه') LIKE ?", ['%' . $normalizedSearch . '%']);
                     });
             });
         }

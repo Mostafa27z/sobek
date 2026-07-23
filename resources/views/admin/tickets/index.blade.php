@@ -9,10 +9,10 @@
 
     <div class="card-body" style="padding: 20px;">
         <form method="GET" action="{{ route('admin.tickets.index') }}" style="display: flex; flex-direction: column; gap: 16px;">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
                 <div>
                     <label style="display: block; margin-bottom: 8px; font-weight: 500;">بحث</label>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="ابحث عن خطوط الطيران أو الوزن أو الوصف أو المدن..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px;">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="ابحث باسم الدولة أو المدينة أو رمز IATA أو اسم المطار أو شركة الطيران..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px;">
                 </div>
 
                 <div>
@@ -20,7 +20,9 @@
                     <select name="from_city_id" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px;">
                         <option value="">جميع المدن</option>
                         @foreach($cities as $city)
-                            <option value="{{ $city->id }}" {{ request('from_city_id') == $city->id ? 'selected' : '' }}>{{ $city->name }}</option>
+                            <option value="{{ $city->id }}" {{ request('from_city_id') == $city->id ? 'selected' : '' }}>
+                                {{ $city->name }} ({{ $city->city }} - {{ $city->country }}) [{{ $city->iata }}]
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -30,7 +32,9 @@
                     <select name="to_city_id" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px;">
                         <option value="">جميع المدن</option>
                         @foreach($cities as $city)
-                            <option value="{{ $city->id }}" {{ request('to_city_id') == $city->id ? 'selected' : '' }}>{{ $city->name }}</option>
+                            <option value="{{ $city->id }}" {{ request('to_city_id') == $city->id ? 'selected' : '' }}>
+                                {{ $city->name }} ({{ $city->city }} - {{ $city->country }}) [{{ $city->iata }}]
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -171,4 +175,19 @@
         </div>
     @endif
 </div>
+@endsection
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.jQuery && jQuery().select2) {
+        $('select[name="from_city_id"], select[name="to_city_id"]').select2({
+            placeholder: "اختر المدينة",
+            allowClear: true,
+            width: '100%',
+            dir: "rtl"
+        });
+    }
+});
+</script>
 @endsection

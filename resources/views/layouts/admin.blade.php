@@ -9,6 +9,11 @@
     <link rel="icon" href="{{ asset('logo.png') }}" type="image/png">
     <link rel="apple-touch-icon" href="{{ asset('logo.png') }}">
     
+    <!-- jQuery & Select2 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         :root{
@@ -225,6 +230,76 @@
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(0,119,182,0.1);
+        }
+        
+        /* Select2 Custom Styles */
+        .select2-container--default .select2-selection--single {
+            border: 1px solid var(--border) !important;
+            border-radius: 6px !important;
+            height: 40px !important;
+            padding: 5px 12px !important;
+            background-color: #fff !important;
+            transition: all 0.2s ease;
+        }
+        .select2-container--default.select2-container--open .select2-selection--single,
+        .select2-container--default.select2-container--focus .select2-selection--single {
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 3px rgba(0, 119, 182, 0.15) !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: var(--dark) !important;
+            line-height: 28px !important;
+            padding-right: 4px !important;
+            padding-left: 20px !important;
+            font-size: 13px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 38px !important;
+            left: 8px !important;
+            right: auto !important;
+        }
+        .select2-dropdown {
+            border: 1px solid var(--border) !important;
+            border-radius: 8px !important;
+            box-shadow: 0 10px 25px rgba(0, 119, 182, 0.12) !important;
+            z-index: 9999 !important;
+            overflow: hidden;
+            background: #fff !important;
+        }
+        .select2-search--dropdown {
+            padding: 8px !important;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border);
+        }
+        .select2-search--dropdown .select2-search__field {
+            border: 1px solid var(--border) !important;
+            border-radius: 6px !important;
+            padding: 6px 10px !important;
+            font-size: 13px !important;
+            outline: none !important;
+        }
+        .select2-search--dropdown .select2-search__field:focus {
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 2px rgba(0, 119, 182, 0.15) !important;
+        }
+        .select2-results__option {
+            padding: 10px 14px !important;
+            font-size: 13px !important;
+            line-height: 1.5 !important;
+            border-bottom: 1px dashed #f0f4f8;
+            color: #334155 !important;
+        }
+        .select2-results__option:last-child {
+            border-bottom: none;
+        }
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: var(--primary) !important;
+            color: #fff !important;
+        }
+        .select2-container--default .select2-results__option[aria-selected="true"] {
+            background-color: var(--sky-light) !important;
+            color: var(--primary-dark) !important;
+            font-weight: bold;
         }
         .checkbox-group {
             display: flex;

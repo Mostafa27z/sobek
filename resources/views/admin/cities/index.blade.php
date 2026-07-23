@@ -6,6 +6,40 @@
         <h2 class="card-title">قائمة المدن</h2>
         <a href="{{ route('admin.cities.create') }}" class="btn btn-primary">إضافة مدينة جديدة</a>
     </div>
+
+    <div class="card-body" style="padding: 20px;">
+        <form method="GET" action="{{ route('admin.cities.index') }}" style="display: flex; flex-direction: column; gap: 16px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                <div>
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">بحث</label>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="ابحث عن المطار أو المدينة أو الدولة أو IATA..." style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+
+                <div>
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">متاح كمغادرة (من)</label>
+                    <select name="can_be_from" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option value="">الكل</option>
+                        <option value="1" {{ request('can_be_from') === '1' ? 'selected' : '' }}>نعم</option>
+                        <option value="0" {{ request('can_be_from') === '0' ? 'selected' : '' }}>لا</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">متاح كوصول (إلى)</label>
+                    <select name="can_be_to" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option value="">الكل</option>
+                        <option value="1" {{ request('can_be_to') === '1' ? 'selected' : '' }}>نعم</option>
+                        <option value="0" {{ request('can_be_to') === '0' ? 'selected' : '' }}>لا</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 12px;">
+                <button type="submit" class="btn btn-primary">بحث</button>
+                <a href="{{ route('admin.cities.index') }}" class="btn btn-secondary">إعادة تعيين</a>
+            </div>
+        </form>
+    </div>
     
     <div style="overflow-x: auto;">
         <table>

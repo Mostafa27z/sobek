@@ -7,9 +7,31 @@ use Illuminate\Http\Request;
 
 class CityController
 {
-    public function index()
+    public function index(Request $request)
     {
-        $cities = City::paginate(15);
+        $query = City::query();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $normalizedSearch = $this->normalizeArabic($search);
+            $query->where(function ($q) use ($normalizedSearch, $search) {
+                $q->whereRaw("REPLACE(REPLACE(REPLACE(REPLACE(name, 'أ', 'ا'), 'إ', 'ا'), 'آ', 'ا'), 'ة', 'ه') LIKE ?", ['%' . $normalizedSearch . '%'])
+                  ->orWhereRaw("REPLACE(REPLACE(REPLACE(REPLACE(city, 'أ', 'ا'), 'إ', 'ا'), 'آ', 'ا'), 'ة', 'ه') LIKE ?", ['%' . $normalizedSearch . '%'])
+                  ->orWhereRaw("REPLACE(REPLACE(REPLACE(REPLACE(country, 'أ', 'ا'), 'إ', 'ا'), 'آ', 'ا'), 'ة', 'ه') LIKE ?", ['%' . $normalizedSearch . '%'])
+                  ->orWhere('iata', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        if ($request->filled('can_be_from')) {
+            $query->where('can_be_from', $request->can_be_from === '1');
+        }
+
+        if ($request->filled('can_be_to')) {
+            $query->where('can_be_to', $request->can_be_to === '1');
+        }
+
+        $cities = $query->paginate(15)->appends($request->query());
+
         return view('admin.cities.index', compact('cities'));
     }
 

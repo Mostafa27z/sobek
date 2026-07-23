@@ -54,7 +54,7 @@
         @csrf
         @method('PUT')
         
-        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="form-group form-grid-2">
             <div>
                 <label for="from_city_id">من مدينة (المغادرة) *</label>
                 <select id="from_city_id" name="from_city_id" required>
@@ -79,7 +79,7 @@
             </div>
         </div>
 
-        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="form-group form-grid-2">
             <div>
                 <label for="airline">شركة الطيران</label>
                 <input type="text" id="airline" name="airline" value="{{ old('airline', $ticket->airline) }}" placeholder="مثال: مصر للطيران">
@@ -90,7 +90,7 @@
             </div>
         </div>
 
-        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="form-group form-grid-2">
             <div>
                 <label for="trip_type">نوع الرحلة *</label>
                 <select id="trip_type" name="trip_type" required>
@@ -106,7 +106,7 @@
 
         <h3 style="margin: 20px 0 10px; color: var(--primary); border-bottom: 2px solid var(--sky-light); padding-bottom: 5px;">تفاصيل رحلة الذهاب</h3>
         
-        <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="form-group form-grid-2">
             <div>
                 <label for="departure_date">تاريخ ووقت المغادرة *</label>
                 <input type="text" id="departure_date" name="departure_date" class="datetime-picker" value="{{ old('departure_date', $ticket->departure_date ? $ticket->departure_date->format('Y-m-d H:i') : '') }}" required readonly>
@@ -138,7 +138,7 @@
         <div id="return_trip_section" style="display: none;">
             <h3 style="margin: 20px 0 10px; color: var(--primary); border-bottom: 2px solid var(--sky-light); padding-bottom: 5px;">تفاصيل رحلة العودة</h3>
             
-            <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group form-grid-2">
                 <div>
                     <label for="return_date">تاريخ ووقت العودة *</label>
                     <input type="text" id="return_date" name="return_date" class="datetime-picker" value="{{ old('return_date', $ticket->return_date ? $ticket->return_date->format('Y-m-d H:i') : '') }}" readonly>
@@ -170,7 +170,7 @@
 
         <h3 style="margin: 20px 0 10px; color: var(--primary); border-bottom: 2px solid var(--sky-light); padding-bottom: 5px;">خيارات إضافية</h3>
 
-        <div class="form-group" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+        <div class="form-group form-grid-3">
             <div>
                 <label for="number_of_adults">الحد الأقصى للكبار *</label>
                 <input type="number" id="number_of_adults" name="number_of_adults" value="{{ old('number_of_adults', $ticket->number_of_adults) }}" min="1" required>
